@@ -1,0 +1,24 @@
+# Python files
+*.pyc
+*.pyo
+*.pyd
+__pycache__
+
+#Virtual environment
+venv/
+
+# IDE settings
+.idea/
+.vscode/
+
+# Build artifacts
+build/
+dist/
+*.egg-info/
+
+# Jupyter notebook checkpoints
+.ipynb_checkpoints/
+
+#OS generated files
+.DS_Store
+Thumbs.db
