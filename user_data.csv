@@ -1,0 +1,6 @@
+user_id,num_tests,total_score,time_spent,ranking
+1,10,75,30,0
+2,20,150,50,1
+3,30,225,70,2
+4,15,120,40,1
+5,50,375,90,2
