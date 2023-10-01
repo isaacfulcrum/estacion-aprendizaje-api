@@ -1,0 +1,1 @@
+TODO! Add explanation on how to use the bin/ directory.
