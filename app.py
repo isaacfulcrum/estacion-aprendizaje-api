@@ -1,9 +1,15 @@
 from flask import Flask, request, jsonify
 import joblib
 import numpy as np
-
+import os
+import openai
 from performance_trend import get_trend
 from util import parse_scores
+
+from dotenv import load_dotenv
+load_dotenv()
+openai.api_key = os.getenv("OPENAI_API_KEY")
+
 
 app = Flask(__name__)
 # Load the model
@@ -31,7 +37,19 @@ def predict():
     updated_scores = scores + [processed_data['score']]
     trend = get_trend(updated_scores).name.replace('_', ' ').title()
 
-    return jsonify({'prediction': predicted_class.tolist()[0], 'trend': trend })
+    response = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {"role": "system", "content": "You are a helpful assistant."},
+            {"role": "user",
+             "content": f'Given that the user\'s performance trend is "{trend}", craft an encouraging message to motivate them to continue their progress. Be concise and use natural language. Don\'t overdue it with the praise. '
+                        f'The message should be no longer than 100 characters. And it should be in SPANISH. '},
+        ]
+    )
+
+    generated_message = response['choices'][0]['message']['content']
+
+    return jsonify({'level': predicted_class.tolist()[0], 'message': generated_message })
 
 
 if __name__ == '__main__':
