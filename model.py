@@ -8,7 +8,7 @@ import xgboost as xgb
 import joblib
 
 # Load your data
-df = pd.read_csv('data.csv')  # Replace with your file path
+df = pd.read_csv('updated_file.csv')  # Replace with your file path
 
 # Encode the target variable to consecutive integers starting from 0
 label_encoder = LabelEncoder()
@@ -16,23 +16,24 @@ df['ranking'] = label_encoder.fit_transform(df['ranking'])
 
 joblib.dump(label_encoder, 'bin/label_encoder.joblib')
 
-# Parse 'prev_scores' into a list of floats
+# Parse 'scores' into a list of floats
 def parse_scores(x):
     if isinstance(x, str):
         return [float(i) for i in x.strip('[]').split(',')]
     else:
         return []
 
-df['prev_scores'] = df['prev_scores'].apply(parse_scores)
 
-# Calculate statistics from 'prev_scores' and create new features
-df['prev_scores_mean'] = df['prev_scores'].apply(lambda x: np.mean(x) if x else 0.0)
-df['prev_scores_max'] = df['prev_scores'].apply(lambda x: np.max(x) if x else 0.0)
-df['prev_scores_min'] = df['prev_scores'].apply(lambda x: np.min(x) if x else 0.0)
-df['prev_scores_std'] = df['prev_scores'].apply(lambda x: np.std(x) if x else 0.0)
+df['scores'] = df['scores'].apply(parse_scores)
 
-# Drop the original 'prev_scores' column
-df.drop('prev_scores', axis=1, inplace=True)
+# Calculate statistics from 'scores' and create new features
+df['scores_mean'] = df['scores'].apply(lambda x: np.mean(x) if x else 0.0)
+df['scores_max'] = df['scores'].apply(lambda x: np.max(x) if x else 0.0)
+df['scores_min'] = df['scores'].apply(lambda x: np.min(x) if x else 0.0)
+df['scores_std'] = df['scores'].apply(lambda x: np.std(x) if x else 0.0)
+
+# Drop the original 'scores' column
+df.drop('scores', axis=1, inplace=True)
 # Split data into features (X) and target (y)
 X = df.drop('ranking', axis=1)
 y = df['ranking']
@@ -42,9 +43,9 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_
 
 # Define a grid of hyperparameter values to search over
 param_grid = {
-    'max_depth': [3, 4, 5, 6],          # Adjust the range of max_depth
-    'learning_rate': [0.01, 0.1, 0.2],  # Adjust the range of learning_rate
-    'n_estimators': [50, 100, 200]      # Adjust the range of n_estimators
+    'max_depth': [3, 4, 5],             # Adjust the range of max_depth
+    'learning_rate': [0.1, 0.01, 0.05], # Adjust the range of learning_rate
+    'n_estimators': [100, 200, 300],    # Adjust the range of n_estimators
 }
 
 # Create the XGBoost classifier
