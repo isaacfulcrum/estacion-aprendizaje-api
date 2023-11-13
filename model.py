@@ -2,10 +2,10 @@ import pandas as pd
 import numpy as np
 from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.metrics import accuracy_score
-from sklearn.preprocessing import StandardScaler, LabelEncoder
+from sklearn.preprocessing import LabelEncoder
 import xgboost as xgb
-# joblib
 import joblib
+from util import parse_scores
 
 # Load your data
 df = pd.read_csv('updated_file.csv')  # Replace with your file path
@@ -15,14 +15,6 @@ label_encoder = LabelEncoder()
 df['ranking'] = label_encoder.fit_transform(df['ranking'])
 
 joblib.dump(label_encoder, 'bin/label_encoder.joblib')
-
-# Parse 'scores' into a list of floats
-def parse_scores(x):
-    if isinstance(x, str):
-        return [float(i) for i in x.strip('[]').split(',')]
-    else:
-        return []
-
 
 df['scores'] = df['scores'].apply(parse_scores)
 

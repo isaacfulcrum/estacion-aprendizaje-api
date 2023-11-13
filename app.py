@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request
 import joblib
 import numpy as np
 from util import parse_scores
@@ -10,6 +10,11 @@ CORS(app)
 # Load the model
 model = joblib.load('bin/model.joblib')
 label_encoder = joblib.load('bin/label_encoder.joblib')  # Assuming you saved label_encoder as well
+
+
+@app.route('/', methods=['GET'])
+def home():
+    return "Estación Aprendizaje API"
 
 
 @app.route('/predict', methods=['POST'])
@@ -28,7 +33,8 @@ def predict():
     # Convert prediction back to the original class
     predicted_class = label_encoder.inverse_transform(prediction)
 
-    return jsonify({'level': predicted_class.tolist()[0]})
+    # Return the prediction as a number
+    return str(predicted_class.tolist()[0])
 
 
 if __name__ == '__main__':
